@@ -1,0 +1,87 @@
+<h1>{{title}}</h1>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Name</th>
+            <th scope="col">GPA</th>
+            <th scope="col">Favorite Subject</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each students}}
+        <tr>
+            <th scope="row">{{this.id}}</th>
+            <td>{{this.name}}</td>
+            <td>{{this.gpa}}</td>
+            <td>{{this.favSubject}}</td>
+            <td><button class="btn btn-danger del-student" data-id="{{this.id}}">Delete</button></td>
+            <td><button class="btn btn-danger update-student" data-id="{{this.id}}">Update to 4.0</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<form id="student-add-form">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" name="name" placeholder="Enter name">
+  </div>
+  <div class="form-group">
+    <label for="gpa">GPA</label>
+    <input type="text" class="form-control" id="gpa" name="gpa" placeholder="Enter GPA">
+  </div>
+  <div class="form-group">
+    <label for="favSubject">Favorite Subject</label>
+    <input type="text" class="form-control" id="favSubject" name="favSubject" placeholder="Enter Favorite Subject">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<script>
+    $(".del-student").on("click", function(e){
+        e.preventDefault();
+        var id = $(this).attr("data-id");
+        $.ajax({
+            url: `/api/student/${id}`,
+            method: "DELETE"
+        }).then(function(data){
+            if(data){
+                location.reload();
+            }
+        });
+    });
+
+    $(".update-student").on("click", function(e){
+        e.preventDefault();
+        var id = $(this).attr("data-id");
+        $.ajax({
+            url: `/api/student/${id}`,
+            method: "PUT",
+            data: {
+                gpa: 4.0
+            }
+        }).then(function(data){
+            if(data){
+                location.reload();
+            }
+        });
+    });
+
+    $("#student-add-form").on("submit", function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "/api/student",
+            method: "POST",
+            data: {
+                name: $("#name").val().trim(),
+                gpa: $("#gpa").val().trim(),
+                favSubject: $("#favSubject").val().trim()
+            }
+        }).then(function(data){
+            if(data){
+                location.reload();
+            }
+        });
+    });
+</script>
